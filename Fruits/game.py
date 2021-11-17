@@ -66,6 +66,7 @@ class Game:
         self.font2 = pygame.font.SysFont('comicsans', 30)
         self.font3 = pygame.font.SysFont('comicsans', 50)
         self.img_fruits = pygame.image.load('img/fruits/fruit.png')
+        self.logo = pygame.image.load('img/fruits/logo.png')
         self.score_show = True
         self.start_game = False
         self.show_game_over = False
@@ -83,7 +84,7 @@ class Game:
     def show_score(self):
         score = self.font2.render(f'{self.score}', 1, (0, 0, 0))
         score_surface = score.get_rect(center=(770, 32))
-        img = self.img_fruits.get_rect(center=(740, 32))
+        img = self.img_fruits.get_rect(center=(730, 32))
 
         self.surface.blit(self.img_fruits, img)
         self.surface.blit(score, score_surface)
@@ -107,8 +108,18 @@ class Game:
         play = pygame.Rect((275, 362), (250, 75))
         play_text = self.font3.render('Play', 1, (0, 0, 0))
         play_text_surface = play_text.get_rect(center=(400, 400))
+        exit_button = pygame.Rect((275, 462), (250, 75))
+        exit_button_text = self.font3.render('Exit', 1, (0, 0, 0))
+        exit_button_text_surface = exit_button_text.get_rect(center=(400, 500))
+        fruit_game = self.font3.render('Fruit Game', 1, (0, 0, 0))
+        fruit_game_surface = fruit_game.get_rect(center=(400, 250))
+        logo_surface = self.logo.get_rect(center=(400, 150))
 
+        self.surface.blit(self.logo, logo_surface)
         self.surface.blit(play_text, play_text_surface)
+        self.surface.blit(exit_button_text, exit_button_text_surface)
+        self.surface.blit(fruit_game, fruit_game_surface)
+        pygame.draw.rect(self.surface, (0, 0, 0), exit_button, 4)
         pygame.draw.rect(self.surface, (0, 0, 0), play, 4)
 
     def restart(self):
@@ -124,6 +135,11 @@ class Game:
         if 275 < self.mouse_pos.x < 525:
             if 362 < self.mouse_pos.y < 437:
                 self.start_game = True
+
+    def is_in_exit_button(self):
+        if 275 < self.mouse_pos.x < 525:
+            if 462 < self.mouse_pos.y < 537:
+                self.running = False
 
     def is_fruit_in_basket(self):
         if self.fruit.pos.y >= self.basket.pos.y - 28:
@@ -173,6 +189,7 @@ class Game:
                         x, y = pygame.mouse.get_pos()
                         self.mouse_pos = Vector2(x, y)
                         self.is_in_button()
+                        self.is_in_exit_button()
                     if event.type == pygame.KEYUP:
                         if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                             self.basket.direction = Vector2(0, 0)
