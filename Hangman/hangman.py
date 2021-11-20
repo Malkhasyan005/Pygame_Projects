@@ -79,7 +79,7 @@ class Game:
 
     def get_images(self):
         for ind in range(7):
-            img = pygame.image.load(f'img/hangman/hangman{ind}.png')
+            img = pygame.image.load(f'hangman/hangman{ind}.png')
             self.images.append(img)
 
     def get_letter(self):
@@ -135,7 +135,7 @@ class Game:
 
 
 def get_words():
-    with open("basa.txt") as f:
+    with open("Categotis.txt") as f:
        return f.read().split()
 
 if __name__ == '__main__':
