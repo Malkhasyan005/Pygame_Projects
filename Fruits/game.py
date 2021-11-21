@@ -151,7 +151,7 @@ class Game:
 
     def is_score_5(self):
         if self.score % 5 == 0:
-            self.fruit.direction.y += 0.1
+            self.fruit.direction.y += 0.05
 
     def move_element(self):
         if self.start_game:
