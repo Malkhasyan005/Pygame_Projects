@@ -64,10 +64,44 @@ class Game:
                 self.player = 1
 
 
+    def win(self):
+        for y in range(3):
+            if self.board[y][0] == 1 and self.board[y][1] == 1 and self.board[y][2] == 1:
+                 self.draw_horizonal_line(y)
+            if self.board[y][0] == 2 and self.board[y][1] == 2 and self.board[y][2] == 2:
+                 self.draw_horizonal_line(y)
+        for x in range(3):
+            if self.board[0][x] == 1 and self.board[1][x] == 1 and self.board[2][x] == 1:
+                 self.draw_vertical_line(x)
+            if self.board[0][x] == 2 and self.board[1][x] == 2 and self.board[2][x] == 2:
+                 self.draw_vertical_line(x)
+        if self.board[0][0] == 1 and self.board[1][1] == 1 and self.board[2][2] == 1:
+            self.draw_diagonal_line()
+        if self.board[0][2] == 1 and self.board[1][1] == 1 and self.board[2][0] == 1:
+            self.draw_revers_diagonal_line()
+        if self.board[0][0] == 2 and self.board[1][1] == 2 and self.board[2][2] == 2:
+            self.draw_diagonal_line()
+        if self.board[0][2] == 2 and self.board[1][1] == 2 and self.board[2][0] == 2:
+            self.draw_revers_diagonal_line()
+
+    def draw_vertical_line(self, i):
+        pygame.draw.line(self.surface, self.line_color, (i * self.width // 3 + self.block_size / 2, 0), (i * self.width // 3 + self.block_size / 2, 800), 8)
+
+    def draw_horizonal_line(self, i):
+        pygame.draw.line(self.surface, self.line_color, (0, i * self.height // 3 + self.block_size / 2), (800, i * self.height // 3 + self.block_size / 2), 8)
+
+    def draw_diagonal_line(self):
+        pygame.draw.line(self.surface, self.line_color, (0, 0), (800, 800), 8)
+
+    def draw_revers_diagonal_line(self):
+        pygame.draw.line(self.surface, self.line_color, (0, 800), (800, 0), 8)
+
+
     def play(self):
         self.surface.fill(self.bg_color)
         self.draw_lines()
         self.draw_blocks()
+        self.win()
 
     def run(self):
         
@@ -78,7 +112,7 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     self.mouse_pos = (int(event.pos[0] / (800 // 3)), int(event.pos[1] / (800 // 3)))
                     self.update_board()
-
+            
             self.play()
 
             pygame.display.update()
