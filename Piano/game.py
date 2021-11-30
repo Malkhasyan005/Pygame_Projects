@@ -43,7 +43,6 @@ class Block:
         return True
 
 
-
 class Game:
     def __init__(self):
         pygame.init()
@@ -62,6 +61,10 @@ class Game:
         mixer.music.load('frog.wav')
         mixer.music.play(-1)
     
+    def out(self, ind):
+        if self.blocks[ind].pos.y > self.height and not self.blocks[ind].click:
+            self.rungame = False
+
     def play(self):
         pass
 
@@ -80,6 +83,7 @@ class Game:
                         for k in range(len(self.blocks)):
                             self.blocks[k].pos.y += 4
                             self.blocks[k].move()
+                            self.out(k)
                             
                         for event in pygame.event.get():
                             if event.type == QUIT:
