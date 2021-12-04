@@ -25,6 +25,9 @@ class Game:
         self.bg_color = (2, 60, 153)
         self.surface = pygame.display.set_mode((self.width, self.height))
         self.rungame = True
+        self.fifty = True
+        self.friend = True
+        self.audience = False
         self.finish = False
 
     def get_questions(self):
@@ -76,6 +79,27 @@ class Game:
             self.is_correct(3)
             self.ind += 1
             self.click = True
+    
+    def show_helps(self):
+        pygame.draw.circle(self.surface, (0, 0, 0), (1150, 50), 35, 3)
+        pygame.draw.circle(self.surface, (0, 0, 0), (1065, 50), 35, 3)
+        pygame.draw.circle(self.surface, (0, 0, 0), (980, 50), 35, 3)
+
+        fifty = self.font.render('50/50', 1, (0, 0, 0))
+        fifty_surface = fifty.get_rect(center=(1150, 50))
+
+        friend = self.font.render('F/H', 1, (0, 0, 0))
+        friend_surface = friend.get_rect(center=(1065, 50))
+
+        audience = self.font.render('H/H', 1, (0, 0, 0))
+        audience_surface = audience.get_rect(center=(980, 50))
+
+        if self.fifty:
+            self.surface.blit(fifty, fifty_surface)
+        if self.friend:
+            self.surface.blit(friend, friend_surface)
+        if self.audience:
+            self.surface.blit(audience, audience_surface)
 
     def show_answers(self):
         answ1 = self.font.render(f"A: {self.answer[0]}", 1, (0, 0, 0))
@@ -125,6 +149,7 @@ class Game:
         self.drwa_answer_blocks()
         self.show_answ()
         self.show_answers()
+        self.show_helps()
 
     def play(self):
         if self.ind >= 7 and not self.show_answer:
