@@ -2,6 +2,7 @@ try:
     import pygame
 except:
     print("Please install pygame")
+import random
 import utils
 from pygame.math import Vector2
 
@@ -25,10 +26,14 @@ class Game:
         self.bg_color = (2, 60, 153)
         self.surface = pygame.display.set_mode((self.width, self.height))
         self.rungame = True
+        self.show_fifty_answer = False
+        self.show_friend_answer = False
         self.fifty = True
         self.friend = True
-        self.audience = False
+        self.audience = True
         self.finish = False
+        self.ind1 = None
+        self.ind2 = None
 
     def get_questions(self):
         self.questions = utils.get_questions("questions.txt")
@@ -67,24 +72,47 @@ class Game:
             self.is_correct(0)
             self.ind += 1
             self.click = True
+            self.show_friend_answer = False
+            self.show_fifty_answer = False
         elif self.mouse_pos.x in range(650, 1150) and self.mouse_pos.y in range(350, 425):
             self.is_correct(1)
             self.ind += 1
             self.click = True
+            self.show_friend_answer = False
+            self.show_fifty_answer = False
         elif self.mouse_pos.x in range(50, 550) and self.mouse_pos.y in range(500, 575):
             self.is_correct(2)
             self.ind += 1
             self.click = True
+            self.show_friend_answer = False
+            self.show_fifty_answer = False
         elif self.mouse_pos.x in range(650, 1150) and self.mouse_pos.y in range(500, 575):
             self.is_correct(3)
             self.ind += 1
             self.click = True
+            self.show_friend_answer = False
+            self.show_fifty_answer = False
     
-    def show_helps(self):
-        pygame.draw.circle(self.surface, (0, 0, 0), (1150, 50), 35, 3)
-        pygame.draw.circle(self.surface, (0, 0, 0), (1065, 50), 35, 3)
-        pygame.draw.circle(self.surface, (0, 0, 0), (980, 50), 35, 3)
+    def help_fried(self):
+        self.show_friend_answer = True
+        ind = random.randint(0, 3)
+        answer = self.font1.render(f'I thing correct answer is {self.answer[ind]}', 1, (0, 0, 0))
 
+        self.surface.blit(answer, (50, 50))
+
+    def choose_help(self):
+        if self.mouse_pos.y in range(15, 85):
+            if self.mouse_pos.x in range(1115, 1185) and self.fifty:
+                self.help_fifty()
+                self.fifty = False
+            if self.mouse_pos.x in range(1030, 1100) and self.friend:
+                self.help_fried()
+                self.friend = False
+            if self.mouse_pos.x in range(945, 1015) and self.audience:
+               # self.help_audience()
+                self.audience = False
+
+    def show_helps(self):
         fifty = self.font.render('50/50', 1, (0, 0, 0))
         fifty_surface = fifty.get_rect(center=(1150, 50))
 
@@ -96,10 +124,21 @@ class Game:
 
         if self.fifty:
             self.surface.blit(fifty, fifty_surface)
+            pygame.draw.circle(self.surface, (0, 0, 0), (1150, 50), 35, 3)
         if self.friend:
             self.surface.blit(friend, friend_surface)
+            pygame.draw.circle(self.surface, (0, 0, 0), (1065, 50), 35, 3)
         if self.audience:
             self.surface.blit(audience, audience_surface)
+            pygame.draw.circle(self.surface, (0, 0, 0), (980, 50), 35, 3)
+    
+    def help_fifty(self):
+        self.show_fifty_answer = True
+        if self.fifty:
+            self.ind1 = random.randint(0, 3)
+            self.ind2 = self.answer.index(self.questions[self.ind].corrans)
+            while self.ind1 == self.ind2:
+                self.ind1 = random.randint(0, 3)
 
     def show_answers(self):
         answ1 = self.font.render(f"A: {self.answer[0]}", 1, (0, 0, 0))
@@ -112,10 +151,21 @@ class Game:
         answ3_surface = answ3.get_rect(topleft=(80, 525))
         answ4_surface = answ4.get_rect(topleft=(680, 525))
         
-        self.surface.blit(answ1, answ1_surface)
-        self.surface.blit(answ2, answ2_surface)
-        self.surface.blit(answ3, answ3_surface)
-        self.surface.blit(answ4, answ4_surface)
+        if not self.show_fifty_answer:
+            self.surface.blit(answ1, answ1_surface)
+            self.surface.blit(answ2, answ2_surface)
+            self.surface.blit(answ3, answ3_surface)
+            self.surface.blit(answ4, answ4_surface)
+
+        if self.show_fifty_answer:
+            if self.ind1 == 0 or self.ind2 == 0:
+                self.surface.blit(answ1, answ1_surface)
+            if self.ind1 == 1 or self.ind2 == 1:
+                self.surface.blit(answ2, answ2_surface)
+            if self.ind1 == 2 or self.ind2 == 2:
+                self.surface.blit(answ3, answ3_surface)
+            if self.ind1 == 3 or self.ind2 == 3:
+                self.surface.blit(answ4, answ4_surface)
 
 
     def drwa_answer_blocks(self):
@@ -154,10 +204,11 @@ class Game:
     def play(self):
         if self.ind >= 7 and not self.show_answer:
             self.show_final_bonus()
-        if not self.show_answer and not self.finish:
+        if not self.show_answer and not self.finish and not self.show_friend_answer:
             self.surface.fill(self.bg_color)
             self.shuffle_answ()
             self.draw_element()
+
 
     def run(self):
         self.get_questions()
@@ -169,6 +220,7 @@ class Game:
                     x, y = pygame.mouse.get_pos()
                     self.mouse_pos = Vector2(x, y)
                     self.choose_answer()
+                    self.choose_help()
                 if event.type == pygame.KEYDOWN and self.show_answer and not self.finish:
                     if event.key == pygame.K_SPACE:
                             self.show_answer = False
