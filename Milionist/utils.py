@@ -51,16 +51,15 @@ def call_friend(qobj):
     ind = randint(0,3)
     return answ[ind]
 
-def audience(qobj):
+def audience(answ):
     audience_obj = {}
-    answ = [qobj.answ2, qobj.answ3, qobj.answ4, qobj.corrans]
     fpercent = randint(0,100)
-    audience_obj[qobj.answ2] = fpercent
+    audience_obj[answ[0]] = fpercent
     spercent = randint(0, 100-fpercent)
-    audience_obj[qobj.answ3] = spercent
+    audience_obj[answ[1]] = spercent
     tpercent = randint(0, 100-fpercent-spercent)
-    audience_obj[qobj.answ4] = tpercent
-    audience_obj[qobj.corrans] = 100 - fpercent - spercent - tpercent
+    audience_obj[answ[2]] = tpercent
+    audience_obj[answ[3]] = 100 - fpercent - spercent - tpercent
     return audience_obj
 
 def shuffle_answers(qobj):

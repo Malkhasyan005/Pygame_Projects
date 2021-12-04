@@ -26,8 +26,11 @@ class Game:
         self.bg_color = (2, 60, 153)
         self.surface = pygame.display.set_mode((self.width, self.height))
         self.rungame = True
+        self.show_contaniue_quest = False
+        self.used_help = False
         self.show_fifty_answer = False
         self.show_friend_answer = False
+        self.show_audience_answer = False
         self.fifty = True
         self.friend = True
         self.audience = True
@@ -74,43 +77,74 @@ class Game:
             self.click = True
             self.show_friend_answer = False
             self.show_fifty_answer = False
+            self.show_audience_answer = False
+            self.used_help = False
         elif self.mouse_pos.x in range(650, 1150) and self.mouse_pos.y in range(350, 425):
             self.is_correct(1)
             self.ind += 1
             self.click = True
             self.show_friend_answer = False
             self.show_fifty_answer = False
+            self.show_audience_answer = False
+            self.used_help = False
         elif self.mouse_pos.x in range(50, 550) and self.mouse_pos.y in range(500, 575):
             self.is_correct(2)
             self.ind += 1
             self.click = True
             self.show_friend_answer = False
             self.show_fifty_answer = False
+            self.show_audience_answer = False
+            self.used_help = False
         elif self.mouse_pos.x in range(650, 1150) and self.mouse_pos.y in range(500, 575):
             self.is_correct(3)
             self.ind += 1
             self.click = True
             self.show_friend_answer = False
             self.show_fifty_answer = False
+            self.show_audience_answer = False
+            self.used_help = False
+
+    def help_audience(self):
+        self.show_audience_answer = True
+        audience_obj = utils.audience(self.answer)
+        
+        answ1 = self.font.render(f"A: {audience_obj[self.answer[0]]}", 1, (0, 0, 0))
+        answ2 = self.font.render(f"B: {audience_obj[self.answer[1]]}", 1, (0, 0, 0))
+        answ3 = self.font.render(f"C: {audience_obj[self.answer[2]]}", 1, (0, 0, 0))
+        answ4 = self.font.render(f"D: {audience_obj[self.answer[3]]}", 1, (0, 0, 0))
+
+        answ1_surface = answ1.get_rect(topleft=(50, 50))
+        answ2_surface = answ2.get_rect(topleft=(50, 90))
+        answ3_surface = answ3.get_rect(topleft=(50, 130))
+        answ4_surface = answ4.get_rect(topleft=(50, 170))
+
+        self.surface.blit(answ1, answ1_surface)
+        self.surface.blit(answ2, answ2_surface)
+        self.surface.blit(answ3, answ3_surface)
+        self.surface.blit(answ4, answ4_surface)
+
     
     def help_fried(self):
         self.show_friend_answer = True
         ind = random.randint(0, 3)
-        answer = self.font1.render(f'I thing correct answer is {self.answer[ind]}', 1, (0, 0, 0))
+        answer = self.font1.render(f'I thing correct answer is "{self.answer[ind]}"', 1, (0, 0, 0))
 
         self.surface.blit(answer, (50, 50))
 
     def choose_help(self):
         if self.mouse_pos.y in range(15, 85):
-            if self.mouse_pos.x in range(1115, 1185) and self.fifty:
+            if self.mouse_pos.x in range(1115, 1185) and self.fifty and not self.used_help:
                 self.help_fifty()
                 self.fifty = False
-            if self.mouse_pos.x in range(1030, 1100) and self.friend:
+                self.used_help = True
+            if self.mouse_pos.x in range(1030, 1100) and self.friend and not self.used_help:
                 self.help_fried()
                 self.friend = False
-            if self.mouse_pos.x in range(945, 1015) and self.audience:
-               # self.help_audience()
+                self.used_help = True
+            if self.mouse_pos.x in range(945, 1015) and self.audience and not self.used_help:
+                self.help_audience()
                 self.audience = False
+                self.used_help = True
 
     def show_helps(self):
         fifty = self.font.render('50/50', 1, (0, 0, 0))
@@ -193,7 +227,34 @@ class Game:
 
         self.surface.blit(finish, finish_surface)
         self.finish = True
+    
+    def do_you_want_to_contaniue(self):
+        self.surface.fill(self.bg_color)
+        pause = self.font1.render(f"You have {self.bonus} points. Do you want to continue?", 1, (0, 0, 0))
+        pause_surface = pause.get_rect(center=(self.width//2, self.height//2))
 
+        yes = self.font1.render(f"Yes", 1, (0, 0, 0))
+        yes_surface = yes.get_rect(center=(515, 390))
+
+        no = self.font1.render(f"No", 1, (0, 0, 0))
+        no_surface = no.get_rect(center=(685, 390))
+
+        yes_button = pygame.Rect((440, 350), (150, 80))
+        no_button = pygame.Rect((610, 350), (150, 80))
+
+        pygame.draw.rect(self.surface, (0, 0, 0), no_button, 4)
+        pygame.draw.rect(self.surface, (0, 0, 0), yes_button, 4)
+        self.surface.blit(pause, pause_surface)
+        self.surface.blit(yes, yes_surface)
+        self.surface.blit(no, no_surface)
+        self.show_contaniue_quest = True
+
+    def want_continue_or_not(self):
+        if self.mouse_pos.y in range(350, 430):
+            if self.mouse_pos.x in range(440, 590):
+                self.show_contaniue_quest = False
+            elif self.mouse_pos.x in range(610, 760):
+                self.show_final_bonus()
 
     def draw_element(self):
         self.drwa_answer_blocks()
@@ -204,7 +265,7 @@ class Game:
     def play(self):
         if self.ind >= 7 and not self.show_answer:
             self.show_final_bonus()
-        if not self.show_answer and not self.finish and not self.show_friend_answer:
+        if not self.show_answer and not self.finish and not self.show_friend_answer and not self.show_audience_answer and not self.show_contaniue_quest:
             self.surface.fill(self.bg_color)
             self.shuffle_answ()
             self.draw_element()
@@ -219,11 +280,15 @@ class Game:
                 if event.type == pygame.MOUSEBUTTONDOWN and not self.show_answer:
                     x, y = pygame.mouse.get_pos()
                     self.mouse_pos = Vector2(x, y)
-                    self.choose_answer()
-                    self.choose_help()
-                if event.type == pygame.KEYDOWN and self.show_answer and not self.finish:
+                    if not self.show_contaniue_quest and not self.finish:
+                        self.choose_answer()
+                        self.choose_help()
+                    else:
+                        self.want_continue_or_not()
+                if event.type == pygame.KEYDOWN and self.show_answer and not self.finish and not self.show_contaniue_quest:
                     if event.key == pygame.K_SPACE:
-                            self.show_answer = False
+                        self.do_you_want_to_contaniue()
+                        self.show_answer = False
             
             self.play()
 
