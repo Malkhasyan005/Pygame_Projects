@@ -69,49 +69,45 @@ class Game:
             self.bonus += int(self.questions[self.ind].bonus)
         else:
             self.show_wrong_answ(ind)
+            self.wrong = True
+
+    def do_varables_false(self):
+        self.show_friend_answer = False
+        self.show_fifty_answer = False
+        self.show_audience_answer = False
+        self.used_help = False
+
 
     def choose_answer(self):
         if self.mouse_pos.x in range(50, 550) and self.mouse_pos.y in range(350, 425):
             self.is_correct(0)
             self.ind += 1
             self.click = True
-            self.show_friend_answer = False
-            self.show_fifty_answer = False
-            self.show_audience_answer = False
-            self.used_help = False
+            self.do_varables_false()
         elif self.mouse_pos.x in range(650, 1150) and self.mouse_pos.y in range(350, 425):
             self.is_correct(1)
             self.ind += 1
             self.click = True
-            self.show_friend_answer = False
-            self.show_fifty_answer = False
-            self.show_audience_answer = False
-            self.used_help = False
+            self.do_varables_false()
         elif self.mouse_pos.x in range(50, 550) and self.mouse_pos.y in range(500, 575):
             self.is_correct(2)
             self.ind += 1
             self.click = True
-            self.show_friend_answer = False
-            self.show_fifty_answer = False
-            self.show_audience_answer = False
-            self.used_help = False
+            self.do_varables_false()
         elif self.mouse_pos.x in range(650, 1150) and self.mouse_pos.y in range(500, 575):
             self.is_correct(3)
             self.ind += 1
             self.click = True
-            self.show_friend_answer = False
-            self.show_fifty_answer = False
-            self.show_audience_answer = False
-            self.used_help = False
+            self.do_varables_false()
 
     def help_audience(self):
         self.show_audience_answer = True
         audience_obj = utils.audience(self.answer)
         
-        answ1 = self.font.render(f"A: {audience_obj[self.answer[0]]}", 1, (0, 0, 0))
-        answ2 = self.font.render(f"B: {audience_obj[self.answer[1]]}", 1, (0, 0, 0))
-        answ3 = self.font.render(f"C: {audience_obj[self.answer[2]]}", 1, (0, 0, 0))
-        answ4 = self.font.render(f"D: {audience_obj[self.answer[3]]}", 1, (0, 0, 0))
+        answ1 = self.font.render(f"A: {audience_obj[self.answer[0]]}%", 1, (0, 0, 0))
+        answ2 = self.font.render(f"B: {audience_obj[self.answer[1]]}%", 1, (0, 0, 0))
+        answ3 = self.font.render(f"C: {audience_obj[self.answer[2]]}%", 1, (0, 0, 0))
+        answ4 = self.font.render(f"D: {audience_obj[self.answer[3]]}%", 1, (0, 0, 0))
 
         answ1_surface = answ1.get_rect(topleft=(50, 50))
         answ2_surface = answ2.get_rect(topleft=(50, 90))
